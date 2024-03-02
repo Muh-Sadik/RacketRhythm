@@ -21,14 +21,17 @@ BCLK  - BCM 18 (pin 12)
 DOUT  - BCM 20 (pin 38)
 LRCL  - BCM 19 (pin 35)
 ```
-# I2S Configuration
-Some modifications are needed:
----------
+
+# Software Setup
+**I2S Configuration:**  
+To enable I2S on Raspberry Pi some modifications are needed:
+
 * Uncomment ```#dtparam=i2s=on``` in ``` sudo nano /boot/firmware/config.txt ```
 * Add ``` dtoverlay=i2s-mmap  ``` and ``` dtoverlay=googlevoicehat-soundcard  ``` This sets up the I2S mapping and activates the I2S sound card overlay.
 * Add ``` snd-bcm2835   ``` to ``` sudo nano /etc/modules ```
 
-# Kernel Compiling
+**Kernel Compiling:**
+
 * Update and install necessary dependencies:
 ```
 $ sudo apt-get update
@@ -38,19 +41,21 @@ $ sudo rpi-update
 $ gcc --version
 gcc (Raspbian 12.2.0-14+rpi1) 12.2.0
 
-* Mic dependencies that needed to be installed:
+# Mic dependencies that needed to be installed:
   $ sudo apt-get install bc
   $ sudo apt-get install libncurses5-dev
   ```
 
- # ALSA Configuration
-Install alsa library:
+**ALSA Configuration:**
+  
+Install Alsa library
 ```
 $ sudo apt install libasound2-dev
 $ sudo apt-get install alsa-utils sox
  ```
-# Test the Microphone
-* For mono system, use ```arecord -c 1 -r 48000 -f S32_LE -t wav -v filename.wav or ``` Mono: arecord -f S32_LE -r 8000 -c 1 shaker2.wav  ```
+**Test the Microphone:**
+ 
+* For mono system, use ```arecord -c 1 -r 48000 -f S32_LE -t wav -v filename.wav ``` or ``` Mono: arecord -f S32_LE -r 8000 -c 1 shaker2.wav  ```
 * To play the file, use ``` Aplay filename.wav  ```
 
 
