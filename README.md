@@ -45,19 +45,20 @@ gcc (Raspbian 12.2.0-14+rpi1) 12.2.0
   $ sudo apt-get install bc
   $ sudo apt-get install libncurses5-dev
   ```
-
-**ALSA Configuration:**
+**Libraries Configuration:**
   
-Install Alsa library
+* Install Alsa library:
 ```
 $ sudo apt install libasound2-dev
 $ sudo apt-get install alsa-utils sox
  ```
+* Install PortAudio library: ``` sudo apt-get install portaudio19-dev ```
+* Install FFTW library: ``` sudo apt-get install libfftw3-dev ```
+
 **Test the Microphone:**
  
 * For mono system, use ```arecord -c 1 -r 48000 -f S32_LE -t wav -v filename.wav ``` or ``` Mono: arecord -f S32_LE -r 8000 -c 1 shaker2.wav  ```
-* To play the file, use ``` Aplay filename.wav  ```
-
+* To play the file, use ``` Aplay filename.wav  ```  
 
 # References
 
