@@ -57,13 +57,13 @@ $ sudo apt-get install alsa-utils sox
 
 **Test the Microphone:**
  
-* For mono system, use ```arecord -c 1 -r 48000 -f S32_LE -t wav -v filename.wav ``` or ``` Mono: arecord -f S32_LE -r 8000 -c 1 shaker2.wav  ```
+* For mono system, use ```arecord -c 1 -r 48000 -f S32_LE -t wav -v filename.wav ``` or ``` Mono: arecord -f S32_LE -r 8000 -c 1 filename.wav  ```
 * To play the file, use ``` Aplay filename.wav  ```  
 
 # References
 
  * Alsa library
- * rpi-i2s repositorie: https://github.com/nejohnson2/rpi-i2s.git
+ * PortAudio library
 
 
   
