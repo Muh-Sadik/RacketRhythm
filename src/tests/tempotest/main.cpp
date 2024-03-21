@@ -13,6 +13,9 @@ int main() {
         std::cerr << "PortAudio initialization failed: " << Pa_GetErrorText(err) << std::endl;
         return 1;
     }
+     // Specify the ALSA PCM device name
+    const char *deviceName = "plughw:1,0"; // Replace with the appropriate device name
+
     // Open default audio input stream
     PaStream *stream;
     err = Pa_OpenDefaultStream(&stream, NUM_CHANNELS, 0, paFloat32, SAMPLE_RATE,  //0: The number of output channels (0 for input-only streams).

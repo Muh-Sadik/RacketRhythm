@@ -2,9 +2,10 @@
 //#include <iostream> // For std::cerr
 //#include <cstdlib>  // For exit()
 
-#define SAMPLE_RATE 48000U
-#define NUM_CHANNELS 1
-#define FRAMES_PER_BUFFER 256
+#define SAMPLE_RATE 44100U
+#define NUM_CHANNELS_output 2
+#define NUM_CHANNELS_input 1
+#define FRAMES_PER_BUFFER 90
 
 ALSACapture::ALSACapture(const std::string& captureDevice, const std::string& playbackDevice) : captureDevice(captureDevice), playbackDevice(playbackDevice), capture_handle(nullptr), playback_handle(nullptr), hw_params(nullptr) {}
 
@@ -23,7 +24,7 @@ ALSACapture::~ALSACapture() {
 
 void ALSACapture::init() {
     int rc;
-unsigned int sampleRate = SAMPLE_RATE; // need to declare a separate unsigned int variable to be used inside rc 
+    unsigned int sampleRate = SAMPLE_RATE; // need to declare a separate unsigned int variable to be used inside rc 
 
     // Open PCM device for recording (capture)
     if ((rc = snd_pcm_open(&capture_handle, captureDevice.c_str(), SND_PCM_STREAM_CAPTURE, 0)) < 0) {
@@ -49,13 +50,13 @@ unsigned int sampleRate = SAMPLE_RATE; // need to declare a separate unsigned in
     if ((rc = snd_pcm_hw_params_set_access(capture_handle, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
         errorCallback("cannot set access type (capture)", rc);
     }
-    if ((rc = snd_pcm_hw_params_set_format(capture_handle, hw_params, SND_PCM_FORMAT_S32_LE)) < 0) {
+    if ((rc = snd_pcm_hw_params_set_format(capture_handle, hw_params, SND_PCM_FORMAT_S16_LE)) < 0) {
         errorCallback("cannot set sample format (capture)", rc);
     }
     if ((rc = snd_pcm_hw_params_set_rate_near(capture_handle, hw_params, &sampleRate , 0)) < 0) {
         errorCallback("cannot set sample rate (capture)", rc);
     }
-    if ((rc = snd_pcm_hw_params_set_channels(capture_handle, hw_params, NUM_CHANNELS)) < 0) {
+    if ((rc = snd_pcm_hw_params_set_channels(capture_handle, hw_params, NUM_CHANNELS_input)) < 0) {
         errorCallback("cannot set channel count (capture)", rc);
     }
 
@@ -79,7 +80,7 @@ unsigned int sampleRate = SAMPLE_RATE; // need to declare a separate unsigned in
     if ((rc = snd_pcm_hw_params_set_rate_near(playback_handle, hw_params, &sampleRate, 0)) < 0) {
         errorCallback("cannot set sample rate (playback)", rc);
     }
-    if ((rc = snd_pcm_hw_params_set_channels(playback_handle, hw_params, NUM_CHANNELS)) < 0) {
+    if ((rc = snd_pcm_hw_params_set_channels(playback_handle, hw_params, NUM_CHANNELS_output)) < 0) {
         errorCallback("cannot set channel count (playback)", rc);
     }
 
@@ -91,12 +92,11 @@ unsigned int sampleRate = SAMPLE_RATE; // need to declare a separate unsigned in
 
 void ALSACapture::captureAndPlaybackLoop() {
     while (true) {
-        char buffer32[FRAMES_PER_BUFFER * 4]; // 32-bit per sample
-        char buffer16[FRAMES_PER_BUFFER * 2]; // 16-bit per sample
+        char buffer[FRAMES_PER_BUFFER * 2]; // 16-bit per sample
         int rc;
 
         // Capture audio
-        if ((rc = snd_pcm_readi(capture_handle, buffer32, FRAMES_PER_BUFFER)) < 0) {
+        if ((rc = snd_pcm_readi(capture_handle, buffer, FRAMES_PER_BUFFER)) < 0) {
             if (rc == -EPIPE) {
                 errorCallback("overrun occurred (capture)", rc);
                 snd_pcm_prepare(capture_handle);
@@ -106,13 +106,13 @@ void ALSACapture::captureAndPlaybackLoop() {
         }
 
         // Check if sound is detected
-        if (isSoundDetected(buffer32, FRAMES_PER_BUFFER)) {
+        if (isSoundDetected(buffer, FRAMES_PER_BUFFER)) {
             // Sound detected, do something
             std::cout << "sounddetected" << std::endl;
         }
 
         // Playback captured audio
-        if ((rc = snd_pcm_writei(playback_handle, buffer16, FRAMES_PER_BUFFER)) < 0) {
+        if ((rc = snd_pcm_writei(playback_handle, buffer, FRAMES_PER_BUFFER)) < 0) {
             if (rc == -EPIPE) {
                 errorCallback("underrun occurred (playback)", rc);
                 snd_pcm_prepare(playback_handle);
@@ -123,15 +123,15 @@ void ALSACapture::captureAndPlaybackLoop() {
     }
 }
 
-bool ALSACapture::isSoundDetected(const char* buffer32, const snd_pcm_uframes_t frames) {
+bool ALSACapture::isSoundDetected(const char* buffer, const snd_pcm_uframes_t frames) {
     // Calculate the average amplitude of the audio samples in the buffer
     double sum = 0.0;
-    for (int i = 0; i < frames * NUM_CHANNELS * 4; i += 4) { // Assuming 32-bit per sample
-        int sample = (buffer32[i + 3] << 24) | (buffer32[i + 2] << 16) | (buffer32[i + 1] << 8) | (buffer32[i] & 0xff); // Little-endian conversion
+    for (int i = 0; i < frames * NUM_CHANNELS_input * 4; i += 4) { // Assuming 32-bit per sample
+        int sample = (buffer[i + 3] << 24) | (buffer[i + 2] << 16) | (buffer[i + 1] << 8) | (buffer[i] & 0xff); // Little-endian conversion
         double amplitude = sample / 2147483648.0; // Normalize to [-1, 1]
         sum += std::abs(amplitude);
     }
-    double averageAmplitude = sum / (frames * NUM_CHANNELS);
+    double averageAmplitude = sum / (frames * NUM_CHANNELS_input);
 
     // Set a threshold for sound detection
     const double threshold = 0.2;
