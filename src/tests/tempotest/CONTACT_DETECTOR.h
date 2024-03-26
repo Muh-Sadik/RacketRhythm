@@ -3,11 +3,8 @@
 
 #include <chrono>
 #include <fftw3.h>
-#include <portaudio.h> // Include portaudio.h here
+#include <portaudio.h> 
 #include <vector>
-
-// maybe we can Define constants here like, sound thershold
-extern std::chrono::steady_clock::time_point lastDetectionTime; // where does this data really belong?
 
 // Define function prototypes
 int audioCallback(const void *inputBuffer, void *outputBuffer,

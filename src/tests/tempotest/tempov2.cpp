@@ -1,6 +1,5 @@
-#include "CONTACT_DETECTOR.h"
 #include <iostream>
-#include <portaudio.h> // Include portaudio.h here
+#include <portaudio.h>  
 #include <cmath>
 #include <fftw3.h>
 #include <chrono>
@@ -42,7 +41,7 @@ if (elapsedTime >= 500) {  // Ensure at least 500 milliseconds between detection
 }
 
 
-#define SOUND_THRESHOLD 35 // Define SOUND_THRESHOLD here if it's not declared elsewhere
+#define SOUND_THRESHOLD 25 // Define SOUND_THRESHOLD here if it's not declared elsewhere
 
 
 int audioCallback(const void *inputBuffer, void *outputBuffer,  //called by portaudio library

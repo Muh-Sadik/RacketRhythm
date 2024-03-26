@@ -1,13 +1,14 @@
 #include "ALSACapture.h"
+#include "SoundTouchDLL.h"
 //#include <iostream> // For std::cerr
 //#include <cstdlib>  // For exit()
 
-#define SAMPLE_RATE 44100U
+#define SAMPLE_RATE 48000U
 #define NUM_CHANNELS_output 2
 #define NUM_CHANNELS_input 1
-#define FRAMES_PER_BUFFER 90
+#define FRAMES_PER_BUFFER 2000
 
-ALSACapture::ALSACapture(const std::string& captureDevice, const std::string& playbackDevice) : captureDevice(captureDevice), playbackDevice(playbackDevice), capture_handle(nullptr), playback_handle(nullptr), hw_params(nullptr) {}
+ALSACapture::ALSACapture(const std::string& captureDevice, const std::string& playbackDevice) : captureDevice(captureDevice), playbackDevice(playbackDevice), capture_handle(nullptr), playback_handle(nullptr), hw_params(nullptr), capture_buffer_size(FRAMES_PER_BUFFER), playback_buffer_size(FRAMES_PER_BUFFER) {}
 
 ALSACapture::~ALSACapture() {
     
@@ -60,6 +61,12 @@ void ALSACapture::init() {
         errorCallback("cannot set channel count (capture)", rc);
     }
 
+
+    // Set buffer size for capture
+    if ((rc = snd_pcm_hw_params_set_buffer_size_near(capture_handle, hw_params, &capture_buffer_size)) < 0) {
+        errorCallback("cannot set buffer size (capture)", rc);
+    }
+
     // Apply hardware parameters for capture
     if ((rc = snd_pcm_hw_params(capture_handle, hw_params)) < 0) {
         errorCallback("cannot apply hardware parameters (capture)", rc);
@@ -83,6 +90,11 @@ void ALSACapture::init() {
     if ((rc = snd_pcm_hw_params_set_channels(playback_handle, hw_params, NUM_CHANNELS_output)) < 0) {
         errorCallback("cannot set channel count (playback)", rc);
     }
+    
+    // Set buffer size for playback
+    if ((rc = snd_pcm_hw_params_set_buffer_size_near(playback_handle, hw_params, &playback_buffer_size)) < 0) {
+        errorCallback("cannot set buffer size (playback)", rc);
+    }
 
     // Apply hardware parameters for playback
     if ((rc = snd_pcm_hw_params(playback_handle, hw_params)) < 0) {
@@ -90,13 +102,22 @@ void ALSACapture::init() {
     }
 }
 
+
 void ALSACapture::captureAndPlaybackLoop() {
+    // Create a SoundTouch processor
+    soundtouch::SoundTouch soundTouch;
+    soundTouch.setSampleRate(SAMPLE_RATE); // Set the sample rate
+    soundTouch.setChannels(1); // Set the number of channels (mono)
+    soundTouch.setTempo(0.8f); // Decrease tempo by 20% (example)
+
+
     while (true) {
-        char buffer[FRAMES_PER_BUFFER * 2]; // 16-bit per sample
+        short capture_buffer[capture_buffer_size]; // 16-bit per sample, 1 channel
+        short playback_buffer[playback_buffer_size * 2]; // 16-bit per sample, 2 channels
         int rc;
 
         // Capture audio
-        if ((rc = snd_pcm_readi(capture_handle, buffer, FRAMES_PER_BUFFER)) < 0) {
+        if ((rc = snd_pcm_readi(capture_handle, capture_buffer, capture_buffer_size)) < 0) {
             if (rc == -EPIPE) {
                 errorCallback("overrun occurred (capture)", rc);
                 snd_pcm_prepare(capture_handle);
@@ -105,14 +126,18 @@ void ALSACapture::captureAndPlaybackLoop() {
             }
         }
 
-        // Check if sound is detected
-        if (isSoundDetected(buffer, FRAMES_PER_BUFFER)) {
-            // Sound detected, do something
-            std::cout << "sounddetected" << std::endl;
+        // Process captured audio using SoundTouch
+        soundTouch.putSamples(capture_buffer, capture_buffer_size); // Feed captured audio to SoundTouch
+        soundTouch.receiveSamples(playback_buffer, playback_buffer_size); // Retrieve processed audio from SoundTouch
+
+        // Duplicate mono audio to stereo
+        for (size_t i = 0; i < capture_buffer_size; ++i) {
+            playback_buffer[i * 2] = capture_buffer[i];
+            playback_buffer[i * 2 + 1] = capture_buffer[i];
         }
 
-        // Playback captured audio
-        if ((rc = snd_pcm_writei(playback_handle, buffer, FRAMES_PER_BUFFER)) < 0) {
+        // Playback captured audio (stereo)
+        if ((rc = snd_pcm_writei(playback_handle, playback_buffer, playback_buffer_size)) < 0) {
             if (rc == -EPIPE) {
                 errorCallback("underrun occurred (playback)", rc);
                 snd_pcm_prepare(playback_handle);
@@ -123,22 +148,6 @@ void ALSACapture::captureAndPlaybackLoop() {
     }
 }
 
-bool ALSACapture::isSoundDetected(const char* buffer, const snd_pcm_uframes_t frames) {
-    // Calculate the average amplitude of the audio samples in the buffer
-    double sum = 0.0;
-    for (int i = 0; i < frames * NUM_CHANNELS_input * 4; i += 4) { // Assuming 32-bit per sample
-        int sample = (buffer[i + 3] << 24) | (buffer[i + 2] << 16) | (buffer[i + 1] << 8) | (buffer[i] & 0xff); // Little-endian conversion
-        double amplitude = sample / 2147483648.0; // Normalize to [-1, 1]
-        sum += std::abs(amplitude);
-    }
-    double averageAmplitude = sum / (frames * NUM_CHANNELS_input);
-
-    // Set a threshold for sound detection
-    const double threshold = 0.2;
-
-    // Compare average amplitude with the threshold
-    return averageAmplitude > threshold;
-}
 
 
 void ALSACapture::errorCallback(const char* error, int errnum) {

@@ -9,7 +9,7 @@ public:
     ~ALSACapture();
     void init();
     void captureAndPlaybackLoop();
-    bool isSoundDetected(const char* buffer32, const snd_pcm_uframes_t frames);
+    //bool isSoundDetected(const char* buffer32, const snd_pcm_uframes_t frames);
 
 private:
     std::string captureDevice;
@@ -17,6 +17,8 @@ private:
     snd_pcm_t *capture_handle;
     snd_pcm_t *playback_handle;
     snd_pcm_hw_params_t *hw_params;
+    snd_pcm_uframes_t capture_buffer_size;
+    snd_pcm_uframes_t playback_buffer_size;
 
     void errorCallback(const char* error, int errnum);
 };

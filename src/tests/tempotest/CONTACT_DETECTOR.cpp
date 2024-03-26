@@ -1,6 +1,6 @@
 #include "CONTACT_DETECTOR.h"
 #include <iostream>
-#include <portaudio.h> // Include portaudio.h here
+#include <portaudio.h>  
 #include <cmath>
 #include <fftw3.h>
 #include <chrono>
@@ -16,7 +16,7 @@ void playingTempo(const std::chrono::steady_clock::duration& timeDifference) {
     std::cout << "Tempo(Game Rhythm): " << tempo << " BPM" << std::endl;
 }
 
-std::chrono::steady_clock::time_point lastDetectionTime; // where does this data really belong?
+std::chrono::steady_clock::time_point lastDetectionTime;  
 
 #define SOUND_THRESHOLD 25 // Define SOUND_THRESHOLD here if it's not declared elsewhere
 
