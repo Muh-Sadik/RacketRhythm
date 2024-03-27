@@ -1,15 +1,15 @@
-#include <iostream>
-#include <portaudio.h>
 #include "contact_detector.h"  
 #include "ball_contact_count.h"
 #include "tempo.h"  
+#include <iostream>
+#include <portaudio.h>
 
 #define SAMPLE_RATE 44100
 #define FRAMES_PER_BUFFER 512
 #define NUM_CHANNELS 1
 
 int main() {
-    // Initializing PortAudio library
+    // Initializing PortAudio librarysudo
     PaError err = Pa_Initialize();
     if (err != paNoError) {
         std::cerr << "PortAudio initialization failed: " << Pa_GetErrorText(err) << std::endl;
@@ -21,7 +21,7 @@ int main() {
     // Open default audio input stream
     PaStream *stream;
     err = Pa_OpenDefaultStream(&stream, NUM_CHANNELS, 0, paFloat32, SAMPLE_RATE,  //0: The number of output channels (0 for input-only streams).
-                               FRAMES_PER_BUFFER, audioCallback, nullptr);
+                               FRAMES_PER_BUFFER, contactdetector::audioCallback, nullptr);
     if (err != paNoError) {
         std::cerr << "PortAudio stream opening failed: " << Pa_GetErrorText(err) << std::endl;
         Pa_Terminate();

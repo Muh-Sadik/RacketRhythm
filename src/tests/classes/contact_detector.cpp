@@ -4,9 +4,9 @@
 #include <cmath>
 #include <fftw3.h>
 
-#define SOUND_THRESHOLD 25 // Define SOUND_THRESHOLD here if it's not declared elsewhere
+#define SOUND_THRESHOLD 25
 
-int audioCallback(const void *inputBuffer, void *outputBuffer,  //called by portaudio library
+int contactdetector::audioCallback(const void *inputBuffer, void *outputBuffer,  //called by portaudio library
                   unsigned long framesPerBuffer,
                   const PaStreamCallbackTimeInfo *timeInfo,
                   PaStreamCallbackFlags statusFlags,
@@ -32,7 +32,9 @@ int audioCallback(const void *inputBuffer, void *outputBuffer,  //called by port
 
  // If sound pulse is detected, process it further
     if (soundDetected) {
-        processBallContact();
+        BallContactCount BallContactCount; // Instantiate an object of BallContactCount
+        BallContactCount.processBallContact(); // Call the processBallContact() method
+       
         }
 
     return paContinue; // constant that indicates to the PortAudio stream callback function that audio processing should continue.

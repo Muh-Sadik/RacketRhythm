@@ -3,10 +3,12 @@
 
 #include <chrono>
 
-extern int ballContactCount;
-extern std::chrono::steady_clock::time_point lastContactTime;
-extern std::chrono::steady_clock::time_point prevContactTime;
+class BallContactCount {
+public:
+    void processBallContact(); // Function to process ball contact
 
-void processBallContact();
+private:
+    
+};
 
 #endif /* BALL_CONTACT_COUNT_H */
