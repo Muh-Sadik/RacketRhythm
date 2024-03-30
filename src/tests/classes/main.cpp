@@ -5,8 +5,7 @@
 #include <portaudio.h>
 
 #define SAMPLE_RATE 44100
-#define FRAMES_PER_BUFFER 512
-#define NUM_CHANNELS 1
+#define NUM_CHANNELS 2  // 2 for stereo input //
 
 int main() {
     // Initializing PortAudio librarysudo
@@ -15,13 +14,30 @@ int main() {
         std::cerr << "PortAudio initialization failed: " << Pa_GetErrorText(err) << std::endl;
         return 1;
     }
-     // Specify the ALSA PCM device name
-    const char *deviceName = "plughw:1,0"; // Replace with the appropriate device name
 
-    // Open default audio input stream
+    // Identify streaming device parameters
+    PaStreamParameters inputParameters;
+    inputParameters.device = Pa_GetDefaultInputDevice(); // default input device //
+    if (inputParameters.device == paNoDevice) {
+        fprintf(stderr,"Error: No default input device.\n");
+        return 1;
+    }
+    inputParameters.channelCount = NUM_CHANNELS;      
+    inputParameters.sampleFormat = paFloat32;
+    inputParameters.suggestedLatency = Pa_GetDeviceInfo( inputParameters.device )->defaultLowInputLatency;
+    inputParameters.hostApiSpecificStreamInfo = NULL;
+
+    // Open audio input stream
     PaStream *stream;
-    err = Pa_OpenDefaultStream(&stream, NUM_CHANNELS, 0, paFloat32, SAMPLE_RATE,  //0: The number of output channels (0 for input-only streams).
-                               FRAMES_PER_BUFFER, contactdetector::audioCallback, nullptr);
+    err = Pa_OpenStream(&stream,
+                        &inputParameters, // Input parameters
+                        NULL,             // The number of output channels (Null for input-only streams).
+                        SAMPLE_RATE,  
+                        paFramesPerBufferUnspecified, // Frames per buffer (use default)
+                        0, // paClipOff
+                        contactdetector::audioCallback,
+                        NULL);
+
     if (err != paNoError) {
         std::cerr << "PortAudio stream opening failed: " << Pa_GetErrorText(err) << std::endl;
         Pa_Terminate();
