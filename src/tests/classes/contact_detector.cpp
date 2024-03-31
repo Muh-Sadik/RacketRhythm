@@ -3,6 +3,7 @@
 #include <portaudio.h>  
 #include <cmath>
 #include <fftw3.h>
+#include <iostream>
 
 #define SOUND_THRESHOLD 25
 
@@ -25,6 +26,7 @@ int contactdetector::audioCallback(const void *inputBuffer, void *outputBuffer, 
         float magnitude = std::abs(fft_result[i][0]);// For each frequency component, calculate the magnitude using the absolute value of the real part 
         if (magnitude > SOUND_THRESHOLD) {
             soundDetected = true;   // Sound pulse is detected, you can process it further
+            std::cout << "Sound detected at frame " << i << std::endl; // Debugging statement
             break;
         }
     }
