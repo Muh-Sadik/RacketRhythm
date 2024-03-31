@@ -6,6 +6,7 @@
 
 #define SAMPLE_RATE 44100
 #define NUM_CHANNELS 2  // 2 for stereo input //
+#define FRAMES_PER_BUFFER 512
 
 int main() {
     // Initializing PortAudio librarysudo
@@ -32,8 +33,8 @@ int main() {
     err = Pa_OpenStream(&stream,
                         &inputParameters, // Input parameters
                         NULL,             // The number of output channels (Null for input-only streams).
-                        SAMPLE_RATE,  
-                        paFramesPerBufferUnspecified, // Frames per buffer (use default)
+                        SAMPLE_RATE, 
+                        FRAMES_PER_BUFFER, 
                         0, // paClipOff
                         contactdetector::audioCallback,
                         NULL);
