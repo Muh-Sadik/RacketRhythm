@@ -3,10 +3,26 @@
 #include "tempo.h"  
 #include <iostream>
 #include <portaudio.h>
+#include <thread>
 
 #define SAMPLE_RATE 44100
 #define NUM_CHANNELS 2  // 2 for stereo input //
 #define FRAMES_PER_BUFFER 512
+
+
+// Function to perform ball contact counting and tempo-related operations
+void detection_contactcounting_and_tempo(){
+    
+    BallContactCount count;          // Create an object of the BallContactCount class
+    count.processBallContact();      // Call processBallContact
+
+    // Declare a variable to hold elapsed time
+    std::chrono::steady_clock::duration elapsedTime;
+
+    tempo tempo;                     // Create an object of the tempo class
+    tempo.playingTempo(elapsedTime); // Call playingTempo, and pass elapsedTime
+}
+
 
 int main() {
     // Initializing PortAudio librarysudo
@@ -55,6 +71,9 @@ int main() {
     // Wait for user input to stop the program
     std::cout << "Press Enter to stop..." << std::endl;
     std::cin.get();
+
+    // Run ballcontactcount and tempo in a different thread
+    std::thread ballcounting(detection_contactcounting_and_tempo);
 
     // Stop and close the audio stream
     err = Pa_StopStream(stream);
