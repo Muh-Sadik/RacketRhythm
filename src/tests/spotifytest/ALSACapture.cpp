@@ -1,5 +1,4 @@
 #include "ALSACapture.h"
-#include "SoundTouchDLL.h"
 //#include <iostream> // For std::cerr
 //#include <cstdlib>  // For exit()
 
@@ -104,16 +103,11 @@ void ALSACapture::init() {
 
 
 void ALSACapture::captureAndPlaybackLoop() {
-    // Create a SoundTouch processor
-    soundtouch::SoundTouch soundTouch;
-    soundTouch.setSampleRate(SAMPLE_RATE); // Set the sample rate
-    soundTouch.setChannels(1); // Set the number of channels (mono)
-    soundTouch.setTempo(0.8f); // Decrease tempo by 20% (example)
 
 
     while (true) {
         short capture_buffer[capture_buffer_size]; // 16-bit per sample, 1 channel
-        short playback_buffer[playback_buffer_size * 2]; // 16-bit per sample, 2 channels
+        short playback_buffer[playback_buffer_size * NUM_CHANNELS_output]; // 16-bit per sample, 2 channels
         int rc;
 
         // Capture audio
@@ -126,14 +120,15 @@ void ALSACapture::captureAndPlaybackLoop() {
             }
         }
 
-        // Process captured audio using SoundTouch
-        soundTouch.putSamples(capture_buffer, capture_buffer_size); // Feed captured audio to SoundTouch
-        soundTouch.receiveSamples(playback_buffer, playback_buffer_size); // Retrieve processed audio from SoundTouch
 
         // Duplicate mono audio to stereo
         for (size_t i = 0; i < capture_buffer_size; ++i) {
-            playback_buffer[i * 2] = capture_buffer[i];
-            playback_buffer[i * 2 + 1] = capture_buffer[i];
+            playback_buffer[i * NUM_CHANNELS_output] = capture_buffer[i];
+            playback_buffer[i * NUM_CHANNELS_output + 1] = capture_buffer[i];
+
+            // Reduce the volume by 50% (attenuation)
+            playback_buffer[i * NUM_CHANNELS_output] /= 3;
+            playback_buffer[i * NUM_CHANNELS_output + 1] /= 3;
         }
 
         // Playback captured audio (stereo)

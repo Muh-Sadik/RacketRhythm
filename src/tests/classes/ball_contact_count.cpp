@@ -15,7 +15,7 @@ void BallContactCount::processBallContact() {
     auto currentTime = std::chrono::steady_clock::now();    // Get the current time
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - prevContactTime).count();   // elapsedTime converted to miliseconds
 
-    if (elapsedTime >= 350) {  // Ensure at least 500 milliseconds between detections
+    if (elapsedTime >= 350) {  // Ensure at least 350 milliseconds between detections
         ++ballContactCount;     // Increment the ball contact count
         std::cout << "Sound pulse detected!" << std::endl;
     }
