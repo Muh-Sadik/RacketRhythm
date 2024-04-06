@@ -72,4 +72,7 @@ $ sudo apt-get install alsa-utils sox
  * PulseAudio library
  * SoundTouch library
  * FFTW  library
-  
+
+<p align="center">
+  <img src="https://github.com/Muh-Sadik/RacketRhythm/assets/157655580/689d6b9b-1b2b-4e73-951a-2b96bb608341" width="auto" height="auto">
+</p>
