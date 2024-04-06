@@ -1,17 +1,19 @@
 #include "contact_detector.h"  
 #include "ball_contact_count.h"
 #include "tempo.h"  
-#include <iostream>
-#include <portaudio.h>
-#include <thread>
+#include "ALSACapture.h"
+#include <iostream>         // Used for input/output stream commands.
+#include <portaudio.h>      // Used for audio input/output using PortAudio.
+#include <alsa/asoundlib.h> // Used for audio input/output and sound card control using ALSA (Advanced Linux Sound Architecture).
+#include <thread>           // Used for threading functions.
 
-#define SAMPLE_RATE 48000
-#define NUM_CHANNELS 2  // 2 for stereo input //
+#define SAMPLE_RATE 48000 // Replace with the appropriate value for your device.
+#define NUM_CHANNELS 2    // 2 for stereo input //
 #define FRAMES_PER_BUFFER 512
 
 // Function to perform ball contact counting and tempo-related operations
-void detection_contactcounting_and_tempo(){
-    
+void detection_contactcounting_and_tempo() {
+
     BallContactCount count;          // Create an object of the BallContactCount class
     count.processBallContact();      // Call processBallContact
 
@@ -22,16 +24,23 @@ void detection_contactcounting_and_tempo(){
     tempo.playingTempo(elapsedTime); // Call playingTempo, and pass elapsedTime
 }
 
+// Function to run ALSA capture and playback
+void runALSACapture(const std::string& captureDevice, const std::string& playbackDevice) {
+    ALSACapture musicCapture(captureDevice, playbackDevice);
+    musicCapture.init();
+    musicCapture.captureAndPlaybackLoop();
+}
+
 int main() {
-    // Initializing PortAudio librarysudo
+    // Initialize PortAudio library
     PaError err = Pa_Initialize();
     if (err != paNoError) {
         std::cerr << "PortAudio initialization failed: " << Pa_GetErrorText(err) << std::endl;
         return 1;
     }
 
-// Specify the ALSA PCM device name
-    const char *alsaDevice = "hw:1,0"; // Replace with the appropriate device name
+    // Specify the ALSA PCM device name
+    const char *alsaDevice = "hw:2,0"; // Replace with the appropriate device name
 
     int numDevices = Pa_GetDeviceCount();
     if (numDevices < 0) {
@@ -78,6 +87,7 @@ int main() {
         Pa_Terminate();
         return 1;
     }
+
     // Start audio stream
     err = Pa_StartStream(stream);
     if (err != paNoError) {
@@ -86,13 +96,24 @@ int main() {
         Pa_Terminate();
         return 1;
     }
-    // Wait for user input to stop the program
-    std::cout << "Press Enter to stop..." << std::endl;
-    std::cin.get();
 
     // Run ballcontactcount and tempo in a different thread
     std::thread ballcounting(detection_contactcounting_and_tempo);
+
+    // Specify the device file paths for capture and playback
+    std::string captureDevice = "hw:1,0";  // Replace with the appropriate capture device file
+    std::string playbackDevice = "hw:1,0"; // Replace with the appropriate playback device identifier
+
+    // Start capturing and playing back audio in a separate thread
+    std::thread musicCaptureThread(runALSACapture, captureDevice, playbackDevice);
+
+    // Join the threads
     ballcounting.join();
+    musicCaptureThread.join();
+   
+    // Wait for user input to stop the program
+    std::cout << "Press Enter to stop..." << std::endl;
+    std::cin.get();
 
     // Stop and close the audio stream
     err = Pa_StopStream(stream);
@@ -108,4 +129,4 @@ int main() {
     Pa_Terminate();
 
     return 0;
-}
+} /* main.cpp */
