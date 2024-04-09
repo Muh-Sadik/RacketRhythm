@@ -20,9 +20,13 @@ int contactdetector::audioCallback(const void *inputBuffer, void *outputBuffer, 
    fftwf_plan plan = fftwf_plan_dft_r2c_1d(framesPerBuffer, (float *)input, fft_result, FFTW_ESTIMATE);
    fftwf_execute(plan);
 
+   // Define frequency range
+    int startFreqIndex = 700 * framesPerBuffer / SAMPLE_RATE; // Convert frequency to index
+    int endFreqIndex = 1000 * framesPerBuffer / SAMPLE_RATE; 
+
     // Calculate magnitude and perform sound detection
     bool soundDetected = false;
-    for (int i = 0; i < framesPerBuffer; ++i) {
+    for (int i = startFreqIndex; i <= endFreqIndex; ++i) {
         float magnitude = std::abs(fft_result[i][0]);// For each frequency component, calculate the magnitude using the absolute value of the real part 
         if (magnitude > SOUND_THRESHOLD) {
             soundDetected = true;   // Sound pulse is detected, you can process it further
