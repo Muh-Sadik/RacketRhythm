@@ -33,7 +33,7 @@ void BallContactCount::processBallContact() {
     }
 
     // Update variables for next contact
-    prevContactTime = lastContactTime;
     lastContactTime = currentTime;
+    prevContactTime = lastContactTime;
     
 } /* ball_contact_count.cpp */
