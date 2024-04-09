@@ -57,7 +57,6 @@ $ sudo apt-get install alsa-utils sox
 * Install PortAudio library: ``` sudo apt-get install portaudio19-dev ```
 * Install SoundTouch library: ``` sudo apt install libsoundtouch-dev ```
 * Install FFTW library: ``` sudo apt-get install libfftw3-dev ```
-* Install PulseAudio library: ``` sudo apt install pulseaudio ```
 
 **Test the Microphone:**
  
@@ -69,7 +68,6 @@ $ sudo apt-get install alsa-utils sox
 
  * Alsa library
  * PortAudio library
- * PulseAudio library
  * SoundTouch library
  * FFTW  library
 
