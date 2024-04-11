@@ -5,6 +5,8 @@
 #include <fftw3.h>     // Used for Fast Fourier Transform (FFT) using FFTW.
 #include <portaudio.h> // Used for audio input/output using PortAudio.
 
+extern bool threeseconds;
+
 class contactdetector {
     public:
     static int audioCallback(const void *inputBuffer, void *outputBuffer,
@@ -13,7 +15,7 @@ class contactdetector {
                   PaStreamCallbackFlags statusFlags,
                   void *userData);
 private:
-
+    //BallContactCount BallContactCount; // Declare BallContactCount as a member variable
 };
 
 #endif /* CONTACT_DETECTOR_H */

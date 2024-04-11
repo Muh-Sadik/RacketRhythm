@@ -6,9 +6,15 @@
 class BallContactCount {
 public:
     void processBallContact(); // Function to process ball contact
-
+    //void morethanthree(std::chrono::steady_clock::time_point& prevContactTime); // Function to find if more than 3seconds has passed
 private:
-    
+
 };
 
 #endif /* BALL_CONTACT_COUNT_H */
+
+/*
+    extern bool x;
+
+    
+    */

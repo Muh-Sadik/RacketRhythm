@@ -1,6 +1,7 @@
 #include "ALSACapture.h" // For capturing audio using ALSA (Advanced Linux Sound Architecture).
 #include <cmath>         // Used for mathematical calculations.
 #include "tempo.h"       // Process tempo file.
+#include "contact_detector.h" // Process contact_detector file.
 #include <iostream>      // For input/output stream commands.
 #include <cstdlib>       // For memory allocation.
 #include <cstring>  
@@ -18,7 +19,12 @@ struct SharedData {
     double tempoValue;
 };
 
-ALSACapture::ALSACapture(const std::string& captureDevice, const std::string& playbackDevice) : captureDevice(captureDevice), playbackDevice(playbackDevice), capture_handle(nullptr), playback_handle(nullptr), hw_params(nullptr), capture_buffer_size(FRAMES_PER_BUFFER), playback_buffer_size(FRAMES_PER_BUFFER), shared_memory_id(-1), shared_memory(nullptr) {}
+ALSACapture::ALSACapture(const std::string& captureDevice, const std::string& playbackDevice) 
+   :captureDevice(captureDevice), playbackDevice(playbackDevice),
+    capture_handle(nullptr), playback_handle(nullptr),
+    hw_params(nullptr), capture_buffer_size(FRAMES_PER_BUFFER),
+    playback_buffer_size(FRAMES_PER_BUFFER),
+    shared_memory_id(-1), shared_memory(nullptr) {}
 
 // Destructor to remove shared memory for cleaning up
 ALSACapture::~ALSACapture() {
@@ -148,23 +154,7 @@ void ALSACapture::captureAndPlaybackLoop() {
 
         // Read generated tempoValue from shared memory
         double tempoValue = shared_memory->tempoValue;
-
-        // Apply volume reduction/increasing using tempoValue dynamically
-        double volume_reduction_ratio = 1.0 - ((170.0 - tempoValue) / 170.0); // Adjust this based on the maximum range of tempoValue you can have.
-        for (size_t i = 0; i < playback_buffer_size * NUM_CHANNELS_output; ++i) {
-            playback_buffer[i] = round(playback_buffer[i] * volume_reduction_ratio); // update the volume dynamically for each buffer
-        }
-
-        // Playback captured audio (stereo)
-        if ((rc = snd_pcm_writei(playback_handle, playback_buffer, playback_buffer_size)) < 0) {
-            if (rc == -EPIPE) {
-                errorCallback("underrun occurred (playback)", rc);
-                snd_pcm_prepare(playback_handle);
-            } else {
-                errorCallback("error writing to PCM playback device", rc);
-            }
-        }
-
+        
         // Capture audio
         if ((rc = snd_pcm_readi(capture_handle, capture_buffer, capture_buffer_size)) < 0) {
             if (rc == -EPIPE) {
@@ -180,10 +170,35 @@ void ALSACapture::captureAndPlaybackLoop() {
             playback_buffer[i * NUM_CHANNELS_output] = capture_buffer[i];
             playback_buffer[i * NUM_CHANNELS_output + 1] = capture_buffer[i];
         }
+        
+        //std::cout << "threeseconds " << threeseconds << std::endl; debugging statement
+
+        double volume_reduction_ratio;
+
+        if (threeseconds)  {
+            volume_reduction_ratio = 0.0; // Adjust this based on the maximum range of tempoValue you can have.
+        } else {
+            volume_reduction_ratio = 1.0 - ((170.0 - tempoValue) / 170.0); // Adjust this based on the maximum range of tempoValue you can have.
+        }
+
+        // Apply volume reduction/increasing using tempoValue dynamically
+        for (size_t i = 0; i < playback_buffer_size * NUM_CHANNELS_output; ++i) {
+            playback_buffer[i] = round(playback_buffer[i] * volume_reduction_ratio); // update the volume dynamically for each buffer
+        }
+
+        // Playback captured audio (stereo)
+        if ((rc = snd_pcm_writei(playback_handle, playback_buffer, playback_buffer_size)) < 0) {
+            if (rc == -EPIPE) {
+                errorCallback("underrun occurred (playback)", rc);
+                snd_pcm_prepare(playback_handle);
+            } else {
+                errorCallback("error writing to PCM playback device", rc);
+            }
+        }
     }
 }
 
 void ALSACapture::errorCallback(const char* error, int errnum) {
     std::cerr << "ALSA error (" << errnum << "): " << error << std::endl;
     exit(1);
-}
+} /* ALSACapture.cpp */

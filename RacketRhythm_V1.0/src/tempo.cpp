@@ -14,23 +14,24 @@ void tempo::playingTempo(const std::chrono::steady_clock::duration &elapsedTime)
     // Write tempoValue to shared memory so you can use it later
     key_t key = ftok("/tmp", 'a');
     if (key == -1) {
-        std::cerr << "ftok failed" << std::endl;
+        std::cerr << "tempoValue ftok failed" << std::endl;
         exit(1);
     }
 
     int shared_memory_id = shmget(key, sizeof(double), IPC_CREAT | 0666);
     if (shared_memory_id == -1) {
-        std::cerr << "shmget failed" << std::endl;
+        std::cerr << "tempoValue shmget failed" << std::endl;
         exit(1);
     }
 
     double* shared_memory = (double*)shmat(shared_memory_id, nullptr, 0);
     if (shared_memory == (void*)-1) {
-        std::cerr << "shmat failed" << std::endl;
+        std::cerr << "tempoValue shmat failed" << std::endl;
         exit(1);
     }
-
+    // Set tempoValue flag
     *shared_memory = tempoValue;
-
+    
+     // Detach shared memory segment
     shmdt(shared_memory);
 } /* tempo.cpp */
