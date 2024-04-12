@@ -19,6 +19,7 @@ private:
     snd_pcm_hw_params_t *hw_params;
     snd_pcm_uframes_t capture_buffer_size;
     snd_pcm_uframes_t playback_buffer_size;
+    
     int shared_memory_id;
     struct SharedData {
         double tempoValue;

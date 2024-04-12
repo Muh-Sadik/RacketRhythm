@@ -1,24 +1,27 @@
-#include "ALSACapture.h" // For capturing audio using ALSA (Advanced Linux Sound Architecture).
-#include <cmath>         // Used for mathematical calculations.
-#include "tempo.h"       // Process tempo file.
-#include "contact_detector.h" // Process contact_detector file.
-#include <iostream>      // For input/output stream commands.
-#include <cstdlib>       // For memory allocation.
+#include "ALSACapture.h"       // For capturing audio using ALSA (Advanced Linux Sound Architecture).
+#include <cmath>               // Used for mathematical calculations.
+#include "tempo.h"             // Process tempo file.
+#include "contact_detector.h"  // Process contact_detector file.
+#include <iostream>            // For input/output stream commands.
+#include <chrono>              // For time-related operations, we are using it for measuring durations between ball contacts.
+#include <cstdlib>             // For memory allocation and using of shared memory functions.
 #include <cstring>  
-#include <sys/ipc.h>     // To initiate inter-process communication (IPC) and shared memory management.
+#include <sys/ipc.h>           // To initiate inter-process communication (IPC) and shared memory management.
 #include <sys/shm.h>
-#include <chrono>        // For time-related operations, we are using it for measuring durations between ball contacts.
 
-#define SAMPLE_RATE 48000U
-#define NUM_CHANNELS_output 2
-#define NUM_CHANNELS_input 1
+#define SAMPLE_RATE 48000U     // Change sample rate as desired
+#define NUM_CHANNELS_output 2  // Change Number of channels for the output device as required
+#define NUM_CHANNELS_input 1   // Change Number of channels for the input device as required
 #define FRAMES_PER_BUFFER 2000
 
-// Define shared memory
+// Define shared memory to share tempoValue variable and use here
 struct SharedData {
     double tempoValue;
 };
 
+// Constructor for ALSA Capture class.
+// Initializes ALSA capture and playback devices, handles, parameters, and buffer sizes.
+// Also initializes shared memory variables.
 ALSACapture::ALSACapture(const std::string& captureDevice, const std::string& playbackDevice) 
    :captureDevice(captureDevice), playbackDevice(playbackDevice),
     capture_handle(nullptr), playback_handle(nullptr),
@@ -47,7 +50,7 @@ ALSACapture::~ALSACapture() {
 
 // Initialize shared memory
 void ALSACapture::initSharedMemory() {
-    // Generate a key for the shared memory segment
+    // Generate a key for the shared memory segment to use the shared memory
     key_t key = ftok("/tmp", 'a');
     if (key == -1) {
         errorCallback("ftok failed", errno);
@@ -146,10 +149,12 @@ void ALSACapture::init() {
     initSharedMemory();
 }
 
+// Function to handle capturing and playback of the chosen music 
+// according to the processed tempoValue 
 void ALSACapture::captureAndPlaybackLoop() {
     while (true) {
-        short capture_buffer[capture_buffer_size]; // 16-bit per sample, 1 channel
-        short playback_buffer[playback_buffer_size * NUM_CHANNELS_output]; // 16-bit per sample, 2 channels
+        short capture_buffer[capture_buffer_size * NUM_CHANNELS_input]; // 16-bit per sample, For input number of channels
+        short playback_buffer[playback_buffer_size * NUM_CHANNELS_output]; // 16-bit per sample, For output number of channels
         int rc;
 
         // Read generated tempoValue from shared memory
@@ -171,14 +176,16 @@ void ALSACapture::captureAndPlaybackLoop() {
             playback_buffer[i * NUM_CHANNELS_output + 1] = capture_buffer[i];
         }
         
-        //std::cout << "threeseconds " << threeseconds << std::endl; debugging statement
+        //std::cout << "stopgame " << stopgame << std::endl; debugging statement
 
+        // Declare a variable to store the volume reduction ratio
         double volume_reduction_ratio;
 
-        if (threeseconds)  {
-            volume_reduction_ratio = 0.0; // Adjust this based on the maximum range of tempoValue you can have.
+        // Check if the game is interrupted for more than 2 seconds
+        if (stopgame)  {
+            volume_reduction_ratio = 0.0; // If the rally has ended turn off music
         } else {
-            volume_reduction_ratio = 1.0 - ((170.0 - tempoValue) / 170.0); // Adjust this based on the maximum range of tempoValue you can have.
+            volume_reduction_ratio = 1.0 - ((170.0 - tempoValue) / 170.0); // Adjust this based on the maximum range of tempoValue you can have
         }
 
         // Apply volume reduction/increasing using tempoValue dynamically

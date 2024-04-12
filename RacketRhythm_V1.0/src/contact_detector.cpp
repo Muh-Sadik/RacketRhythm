@@ -8,10 +8,12 @@
 #define SOUND_THRESHOLD 1.2
 #define SAMPLE_RATE 48000
 
-bool threeseconds = false;
+bool stopgame = false; // Variable to end the game if the game is interrupted 
 
+// Store the lastContactTime of the ball as a global variable
 static std::chrono::steady_clock::time_point lastContactTime = std::chrono::steady_clock::now();
 
+// Callback function called by PortAudio to process audio data
 int contactdetector::audioCallback(const void *inputBuffer, void *outputBuffer,  //called by portaudio library
                   unsigned long framesPerBuffer,
                   const PaStreamCallbackTimeInfo *timeInfo,
@@ -28,19 +30,20 @@ int contactdetector::audioCallback(const void *inputBuffer, void *outputBuffer, 
 
    // Define frequency range (800 - 1200 Hz)
     int startFreqIndex = 800 * framesPerBuffer / SAMPLE_RATE; // Convert frequency to index
-    int endFreqIndex = 900 * framesPerBuffer / SAMPLE_RATE; // Convert frequency to index
+    int endFreqIndex = 900 * framesPerBuffer / SAMPLE_RATE;   // Convert frequency to index
 
     // Calculate magnitude and perform sound detection
     bool soundDetected = false;
     for (int i = startFreqIndex; i <= endFreqIndex; ++i) {
-        float magnitude = std::abs(fft_result[i][0]);// For each frequency component, calculate the magnitude using the absolute value of the real part 
+    // For each frequency component within the defined range, calculate the magnitude using the absolute value of the real part 
+        float magnitude = std::abs(fft_result[i][0]);
         if (magnitude > SOUND_THRESHOLD) {
             soundDetected = true;   // Sound pulse is detected, you can process it further
         //  std::cout << "Sound detected at frame " << i << std::endl; // Debugging statement, uncomment when needed.
             break;
         }
     }
-    fftwf_free(fft_result); //free alocated memory
+    fftwf_free(fft_result);            // free alocated memory
     BallContactCount BallContactCount; // Instantiate an object of BallContactCount
 
  // If sound pulse is detected, process it further
@@ -54,11 +57,11 @@ int contactdetector::audioCallback(const void *inputBuffer, void *outputBuffer, 
         auto currentTime = std::chrono::steady_clock::now();
         auto timeDifference = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - lastContactTime).count();
 
-        // Check if the time difference is more than three seconds
+        // Check if the time difference is more than two seconds
         if (timeDifference > 2000) {
-            threeseconds = true;
+            stopgame = true;
         } else {
-            threeseconds = false;
+            stopgame = false;
         }
     }
 

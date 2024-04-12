@@ -1,6 +1,7 @@
 #include "ball_contact_count.h"
 #include "tempo.h"
-#include <iostream>
+#include <iostream>   // Used for input/output stream commands.
+#include <chrono>     // For time-related operations, we are using it for measuring durations between ball contacts.
 
 // Define a counter to store the number of ball contacts
 int ballContactCount = 0;
@@ -15,7 +16,7 @@ void BallContactCount::processBallContact() {
     auto currentTime = std::chrono::steady_clock::now();    // Get the current time
     auto elapsedTime = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime - prevContactTime).count();   // elapsedTime converted to miliseconds
 
-    if (elapsedTime >= 350) {  // Ensure at least 350 milliseconds between detections
+    if (elapsedTime >= 350) {   // Ensure at least 350 milliseconds between detections
         ++ballContactCount;     // Increment the ball contact count
         std::cout << "Sound pulse detected!" << std::endl;
     }
@@ -27,6 +28,7 @@ void BallContactCount::processBallContact() {
         std::cout << "Time between contacts: " << elapsedTimeDuration.count() << " milliseconds" << std::endl;
         tempo tempo; // Create an instance of the tempo class
         tempo.playingTempo(elapsedTimeDuration); // Call the playingTempo function through the tempo instance
+        
         // Reset ballContactCount 
         ballContactCount = 0;
 

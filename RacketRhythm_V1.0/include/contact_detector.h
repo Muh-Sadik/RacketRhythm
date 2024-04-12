@@ -5,7 +5,7 @@
 #include <fftw3.h>     // Used for Fast Fourier Transform (FFT) using FFTW.
 #include <portaudio.h> // Used for audio input/output using PortAudio.
 
-extern bool threeseconds;
+extern bool stopgame;  //variable that states if rally has broken down
 
 class contactdetector {
     public:
@@ -15,7 +15,6 @@ class contactdetector {
                   PaStreamCallbackFlags statusFlags,
                   void *userData);
 private:
-    //BallContactCount BallContactCount; // Declare BallContactCount as a member variable
 };
 
 #endif /* CONTACT_DETECTOR_H */
