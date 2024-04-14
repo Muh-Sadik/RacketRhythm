@@ -64,7 +64,7 @@ $ sudo apt-get install alsa-utils sox
 * To play the file, use ``` Aplay filename.wav  ```
   
 # Authors
- * Muhammed SADIK(2938316S)
+ * Muhammed Sadik(2938316S)
  * Haroun Asher(2459396A)
  * Shaker Yasir(2834206M)
  * Hancheng Wang(2944209W)
