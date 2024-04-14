@@ -1,5 +1,5 @@
 # Setting up Instructions
-1-Clone the Repository 
+1-Clone the Repository: 
 * Clone the Racket Rhythm repository to your local machine and use the last version contained in RacketRhythm_V1.0 folder to run needed commands. 
 * Note: src file under the master branch was used for development and initial testing and debugging for systems different devices.
 
@@ -9,17 +9,17 @@
 * For audio input, use any 3.5mm to 3.5mm audio cable to connect to your PC or mobilephone.
 
 3-Software Setup:
-* Configure I2S settings on Raspberry Pi by editing /boot/firmware/config.txt and /etc/modules.
+* Configure I2S settings on Raspberry Pi by editing ```/boot/firmware/config.txt``` and ```/etc/modules```.
 * Compile kernel and install necessary dependencies.
 
 4-Library Configuration:
 * Install required libraries such as Alsa, PortAudio, and FFTW.
 
 5-Microphone Testing:
-* Use arecord command to record audio and aplay command to play back the recorded file for microphone testing.
+* Use ```arecord``` command to record audio and ```aplay``` command to play back the recorded file for microphone testing.
 
 6-Adjust the ID's of PLAYBACK Hardware Devices:  
-* Use aplay -l to check the list of connected hardware devices and change the below device numbers accordingly.
+* Use ```aplay -l``` to check the list of connected hardware devices and change the below device numbers accordingly.
 
 ```https://github.com/Muh-Sadik/RacketRhythm/blob/3dd21cd3761f9f555ff87d452df89c9c807c063c/RacketRhythm_V1.0/src/main.cpp#L43```
 
