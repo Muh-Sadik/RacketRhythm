@@ -20,6 +20,7 @@ Instagram: https://www.instagram.com/racket.rhythm/
  * C++ for Raspberry Pi control
  
 **Hardware Setup:**
+
 Adrafruit I2S MEMs Microphone breakout board-SPH0645 was used in this setup. 
 Microphone breakout board documentation can be found here: [Adafruit I2S MEMS Microphone Breakout](https://cdn-learn.adafruit.com/downloads/pdf/adafruit-i2s-mems-microphone-breakout.pdf), and [SPH0645LM4H-B Rev C Datasheet](https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/908/SPH0645LM4H-B.pdf). GPIO pins connection are as follows:
 
@@ -87,7 +88,7 @@ $ sudo apt-get install alsa-utils sox
  * PortAudio library
  * FFTW  library
 
- * Clone the repository to your local machine.
+Clone the repository to your local machine.
 ```git clone https://github.com/Muh-Sadik/RacketRhythm.git```
 
 <p align="center">
