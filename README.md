@@ -61,7 +61,14 @@ $ sudo apt-get install alsa-utils sox
  
 * Use this command: ```arecord -f cd -r 44100 -c 1 -D plughw:1,0 -v recording.wav``` with "-v" used to display detailed information about the audio capture process or ```arecord -f cd -r 44100 -c 1 -D plughw:1,0 recording.wav``` Replace "plughw:0,0" with the appropriate device name for your setup based on the output of the aplay -l command.
 * For mono system, use ```arecord -c 1 -r 48000 -f S32_LE -t wav -v filename.wav ``` or ``` Mono: arecord -f S32_LE -r 8000 -c 1 filename.wav  ```
-* To play the file, use ``` Aplay filename.wav  ```  
+* To play the file, use ``` Aplay filename.wav  ```
+  
+# Authors
+ * Muhammed SADIK(2938316S)
+ * Haroun Asher(2459396A)
+ * Shaker Yasir(2834206M)
+ * Hancheng Wang(2944209W)
+ 
 
 # References
 
