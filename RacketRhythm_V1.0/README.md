@@ -34,4 +34,20 @@
 9-Run:
 * Run the compiled code to start the Racket Rhythm game experience.
 
+# How to use CMake:
+1-Create Build Directory:
+* Make a directory named "Build" to hold the build files by running the command ```mkdir Build```.
+
+2-Navigate to the Build Director:
+* Go into the Build directory by running the command ```cd Build```. 
+
+3-Run CMake Configuration:
+* Generate the build files by running the command ```cmake ...```  to configure the project. This command tells CMake to look for the CMakeLists.txt file in the parent directory and generate the necessary build files based on instructions included in it.
+
+4-Build the Project:
+* Compile your project using the command ```make``` to build the project.
+
+
+Make sure your CMakeLists.txt file is correctly configured to define your project's build settings and dependencies.
+
 
