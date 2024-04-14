@@ -6,7 +6,7 @@ Instagram: https://www.instagram.com/racket.rhythm/
 # Key Features
 * Music-driven gameplay.
 * Targets amateur players improving on consistency.
-* Dynamic Sound volume adjustments for players of all levels.
+* Dynamic volume adjustments for players of all levels.
 * Music will stop if the rally breaks down.
 
 # Setup Instructions
