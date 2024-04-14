@@ -8,7 +8,18 @@ Instagram: https://www.instagram.com/racket.rhythm/
 * Targets amateur players improving on consistency.
 * Dynamic Sound adjustments for players of all levels.
 
-# Hardware Setup
+# Setup Instructions
+**Hardware Requirements:**
+ * Raspberry Pi
+ * Adrafruit I2S MEMs Microphone breakout board - SPH0645 x2
+ * Audio Sound Card - AU-MMSA
+ * Speakers
+ * 3.5mm to 3.5mm Audio Cable
+
+**Software Requirements:**
+ * C++ for Raspberry Pi control
+ 
+**Hardware Setup:**
 Adrafruit I2S MEMs Microphone breakout board-SPH0645 was used in this setup. 
 Microphone breakout board documentation can be found here: [Adafruit I2S MEMS Microphone Breakout](https://cdn-learn.adafruit.com/downloads/pdf/adafruit-i2s-mems-microphone-breakout.pdf), and [SPH0645LM4H-B Rev C Datasheet](https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/908/SPH0645LM4H-B.pdf). GPIO pins connection are as follows:
 
@@ -24,7 +35,7 @@ SEL  - Mono: no connection needed
      - Stero: right channel 3.3v, left channel Gnd
 ```
 
-# Software Setup
+**Software Setup:**
 **I2S Configuration:**  
 To enable I2S on Raspberry Pi some modifications are needed:
 
@@ -75,6 +86,9 @@ $ sudo apt-get install alsa-utils sox
  * Alsa library
  * PortAudio library
  * FFTW  library
+
+ * Clone the repository to your local machine.
+```git clone https://github.com/Muh-Sadik/RacketRhythm.git```
 
 <p align="center">
   <img src="https://github.com/Muh-Sadik/RacketRhythm/assets/157655580/689d6b9b-1b2b-4e73-951a-2b96bb608341" width="auto" height="auto">
