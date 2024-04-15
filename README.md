@@ -76,12 +76,14 @@ $ sudo apt-get install alsa-utils sox
 * For mono system, use ```arecord -c 1 -r 48000 -f S32_LE -t wav -v filename.wav ``` or ``` Mono: arecord -f S32_LE -r 8000 -c 1 filename.wav  ```
 * To play the file, use ``` Aplay filename.wav  ```
   
-# Authors
- * Muhammed Sadik(2938316S)
- * Haroun Asher(2459396A)
- * Shaker Yasir(2834206M)
- * Hancheng Wang(2944209W)
- 
+# Division of Labour
+|Team member                                   |	Student Number|	Roles                                                                                                              |
+| -------------                                | ------------- |---------------                                                                                                     |
+|[Muhammed Sadik](https://github.com/Muh-Sadik)|2938316S       | Hardware: Integration and   Configuration;  Software: Development,Testing and Debugging;  Social Media Management |
+|[Haroun Asher]( https://github.com/hasherr)   |2459396A       | Hardware: Hardware Selection;  Software:  Development ;  Project Management                                        |             
+|[Shaker Yasir](https://github.com/Shakeryasir)|2834206M       | Software: Structure Design, Optimization                                                                           | 	
+|[Hancheng Wang](https://github.com/Whctongji) |2944209W       | Documentation                                                                                                      | 	                    	
+
 
 # References
 
