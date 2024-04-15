@@ -77,12 +77,16 @@ $ sudo apt-get install alsa-utils sox
 * To play the file, use ``` Aplay filename.wav  ```
   
 # Division of Labour
-|Team member                                   |	Student Number|	Roles                                                                                                              |
-| -------------                                | ------------- |---------------                                                                                                     |
-|[Muhammed Sadik](https://github.com/Muh-Sadik)|2938316S       | Hardware: Integration and   Configuration;  Software: Development,Testing and Debugging;  Social Media Management |
-|[Haroun Asher]( https://github.com/hasherr)   |2459396A       | Hardware: Hardware Selection;  Software:  Development ;  Project Management                                        |             
-|[Shaker Yasir](https://github.com/Shakeryasir)|2834206M       | Software: Structure Design, Optimization                                                                           | 	
-|[Hancheng Wang](https://github.com/Whctongji) |2944209W       | Documentation                                                                                                      | 	                    	
+|Team member                                     |	Student Number|	Roles|
+| -------------                                  | ------------- |---------------|
+|[Muhammed Sadik](https://github.com/Muh-Sadik)  |2938316S       | Hardware: Integration and Configuration|
+|                                                |               | Software: Development,Testing and Debugging|
+|                                                |               | Social Media Management|
+|[Haroun Asher]( https://github.com/hasherr)     |2459396A       | Hardware: Hardware Selection|  
+|                                                |               | Software: Development|
+|                                                |               | Project Management|
+|[Shaker Yasir](https://github.com/Shakeryasir)  |2834206M       | Software: Structure Design, Optimization| 	
+|[Hancheng Wang](https://github.com/Whctongji)   |2944209W       |Documentation| 	                    	
 
 
 # References
